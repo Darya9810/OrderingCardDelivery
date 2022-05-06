@@ -7,27 +7,33 @@ import org.openqa.selenium.Keys;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selectors.withText;
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.open;
+
 public class CardDeliveryFormTest {
-    private int daysDiff = 4;
-    private String GetOrderDate(int daysDiff) {
+    private int daysOffset = 4;
+
+    private String getOrderDate(int daysOffset) {
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        return dateFormat.format(LocalDateTime.now().plusDays(daysDiff));
+        return dateFormat.format(LocalDateTime.now().plusDays(daysOffset));
     }
+
     @Test
     public void shouldCreditCardDeliveryOrder() {
 
         open("http://localhost:9999");
 
-        String dateOrder = GetOrderDate(daysDiff);
+        String dateOrder = getOrderDate(daysOffset);
         SelenideElement element = $("form");
+        SelenideElement fieldDate = element.$("[data-test-id=date] input");
         element.$("[data-test-id=city] input").setValue("Новосибирск");
-        element.$("[data-test-id=date] input").doubleClick();
-        element.$("[data-test-id=date] input").sendKeys(Keys.BACK_SPACE);
-        element.$("[data-test-id=date] input").setValue(dateOrder);
+        fieldDate.doubleClick();
+        fieldDate.sendKeys(Keys.BACK_SPACE);
+        fieldDate.setValue(dateOrder);
         element.$("[data-test-id=name] input").setValue("Иванов Петр Петрович");
         element.$("[data-test-id=phone] input").setValue("+79099099090");
         element.$("[data-test-id=agreement]").click();
